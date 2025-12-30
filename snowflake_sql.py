@@ -1,0 +1,19 @@
+import config
+
+SQL_UPLOAD_TO_STAGE = f"""
+    PUT file://{config.LOCAL_FILE_PATH} @{config.STAGE_NAME} 
+    AUTO_COMPRESS=TRUE 
+    OVERWRITE=TRUE
+"""
+
+SQL_COPY_INTO_RAW = f"""
+    COPY INTO {config.RAW_TABLE} 
+    FROM @{config.STAGE_NAME}
+    FILE_FORMAT = (FORMAT_NAME = {config.FILE_FORMAT})
+    ON_ERROR = 'SKIP_FILE'
+    FORCE = TRUE
+"""
+
+SQL_CALL_CORE_PROC = f"CALL {config.PROC_LOAD_CORE}();"
+
+SQL_CALL_MARTS_PROC = f"CALL {config.PROC_LOAD_MARTS}();"
